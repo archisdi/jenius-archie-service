@@ -5,6 +5,11 @@ class LogRepo extends BaseRepository {
         const mongo = await this.getMongoInstance();
         return mongo.Log.create(data);
     }
+
+    async find(id) {
+        const mongo = await this.getMongoInstance();
+        return mongo.Admin.findOne({ id });
+    }
 }
 
 module.exports = LogRepo;

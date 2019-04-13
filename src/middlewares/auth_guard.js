@@ -2,16 +2,16 @@
 
 const { HttpError } = require('node-common');
 const JWT = require('../utils/libs/jwt');
-const UserRepository = require('../repositories/user_repo');
+const AdminRepository = require('../repositories/admin_repo');
 const parseDataObject = require('../utils/helpers').parseDataObject;
 
 const generateContext = async (payload) => {
-    const UserRepo = new UserRepository();
-    const user = await UserRepo.find(payload.uid);
+    const AdminRepo = new AdminRepository();
+    const admin = await AdminRepo.find(payload.uid);
 
     return parseDataObject({
-        id: user.id,
-        name: user.name
+        id: admin.id,
+        name: admin.name
     });
 };
 
