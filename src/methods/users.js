@@ -1,7 +1,13 @@
 'use strict';
 
-const { HttpError } = require('node-common');
+const { HttpError, JobWorker } = require('node-common');
 const Repository = require('../repositories');
+
+const retrieveUserCachedData = async (id) => {
+    const Repo = new Repository();
+    const cache = await Repo.get('cache').get(`user::${id}`);
+    return cache ? JSON.parse(cache) : null;
+};
 
 /**
  * @description create a new user
@@ -20,6 +26,9 @@ exports.createUser = async (data, context) => {
 
         /** create new user */
         const newUser = await Repo.get('user').create(body);
+
+        /** cache new user data asynchronous */
+        await JobWorker.dispatch('cache-user', { id: newUser.id, ...body });
 
         return {
             message: 'new user created',
@@ -73,8 +82,11 @@ exports.getUserDetail = async (data, context) => {
         const { params: { id } } = data;
         const Repo = new Repository();
 
+        /** try to retrive user data from cache, only works if data retrieval using id */
+        let user = await retrieveUserCachedData(id);
+
         /** will retrieve user based on id, account number or identity number */
-        const user = await Repo.get('user').findOne({ $or: [{ _id: id }, { account_number: id }, { identity_number: id }] });
+        if (!user) user = await Repo.get('user').findOne({ $or: [{ _id: id }, { account_number: id }, { identity_number: id }] });
         if (!user) throw HttpError.NotFound('user not found');
 
         return {
@@ -106,6 +118,9 @@ exports.updateUser = async (data, context) => {
 
         /** update user data */
         await Repo.get('user').updateOne({ _id: id }, { ...body });
+
+        /** update user cache asynchronous */
+        await JobWorker.dispatch('cache-user', { id, ...body });
 
         return {
             message: 'user data updated'
