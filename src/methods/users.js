@@ -18,6 +18,7 @@ exports.createUser = async (data, context) => {
 
         if (user) throw HttpError.BadRequest('user already exsist');
 
+        /** create new user */
         const newUser = await Repo.get('user').create(body);
 
         return {
@@ -72,8 +73,8 @@ exports.getUserDetail = async (data, context) => {
         const { params: { id } } = data;
         const Repo = new Repository();
 
-        /** will retrieve user based on account number or identity number */
-        const user = await Repo.get('user').findOne({ $or: [{ account_number: id }, { identity_number: id }] });
+        /** will retrieve user based on id, account number or identity number */
+        const user = await Repo.get('user').findOne({ $or: [{ _id: id }, { account_number: id }, { identity_number: id }] });
         if (!user) throw HttpError.NotFound('user not found');
 
         return {
@@ -103,6 +104,7 @@ exports.updateUser = async (data, context) => {
 
         if (user) throw HttpError.BadRequest('one of user attributes already taken by another user');
 
+        /** update user data */
         await Repo.get('user').updateOne({ _id: id }, { ...body });
 
         return {
@@ -115,20 +117,23 @@ exports.updateUser = async (data, context) => {
 };
 
 /**
- * @description delete user
+ * @description delete a user
  * @method DELETE
  */
 exports.deleteUser = async (data, context) => {
     try {
+        const { params: { id } } = data;
         const Repo = new Repository();
-        const user = await Repo.get('user').find(context.id);
 
-        if (user) throw HttpError.BadRequest('user already exsist');
+        /** will retrieve user based on id, account number or identity number */
+        const user = await Repo.get('user').findOne({ _id: id });
+        if (!user) throw HttpError.NotFound('user not found');
 
+        /** delete user */
+        await Repo.get('user').deleteOne({ _id: id });
 
         return {
-            message: 'user data retrieved',
-            data: { ...user }
+            message: 'user data deleted'
         };
     } catch (err) {
         if (err.status) throw err;

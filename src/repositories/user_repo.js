@@ -34,6 +34,11 @@ class UserRepo extends BaseRepository {
         const mongo = await this.getMongoInstance();
         return mongo.User.updateOne(conditions, payload);
     }
+
+    async deleteOne(conditions) {
+        const mongo = await this.getMongoInstance();
+        return mongo.User.deleteOne(conditions);
+    }
 }
 
 module.exports = UserRepo;
