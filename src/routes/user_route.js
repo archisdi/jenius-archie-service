@@ -10,10 +10,10 @@ const {
 } = require('../methods/users');
 
 /** User Routes */
-router.post('/', Logic(createUser));
+router.post('/', Validator('userCreate'), Logic(createUser));
 router.get('/', Validator('userList'), Logic(getUserList));
 router.get('/:id', Logic(getUserDetail));
-router.put('/:id', Logic(updateUser));
+router.put('/:id', Validator('userUpdate'), Logic(updateUser));
 router.delete('/:id', Logic(deleteUser));
 
 module.exports = router;

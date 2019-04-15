@@ -9,12 +9,22 @@ const Repository = require('../repositories');
  */
 exports.createUser = async (data, context) => {
     try {
+        const { body } = data;
         const Repo = new Repository();
-        await Repo.get('user').create(data);
+
+        /** will iterate to object key to generate search query to prevent duplication in every key given */
+        const query = Object.keys(body).map(key => ({ [key]: body[key] }));
+        const user = await Repo.get('user').findOne({ $or: query });
+
+        if (user) throw HttpError.BadRequest('user already exsist');
+
+        const newUser = await Repo.get('user').create(body);
 
         return {
-            message: 'user profile retrieved',
-            data: {}
+            message: 'new user created',
+            data: {
+                id: newUser.id, email: newUser.email, account_number: newUser.account_number, identity_number: newUser.identity_number
+            }
         };
     } catch (err) {
         if (err.status) throw err;
@@ -84,12 +94,19 @@ exports.getUserDetail = async (data, context) => {
  */
 exports.updateUser = async (data, context) => {
     try {
+        const { body, params: { id } } = data;
         const Repo = new Repository();
-        const user = await Repo.get('user').find(context.id);
+
+        /** will iterate to object key to generate search query to prevent duplication in every key given */
+        const query = Object.keys(body).map(key => ({ [key]: body[key] }));
+        const user = await Repo.get('user').findOne({ $or: query, _id: { $ne: id } });
+
+        if (user) throw HttpError.BadRequest('one of user attributes already taken by another user');
+
+        await Repo.get('user').updateOne({ _id: id }, { ...body });
 
         return {
-            message: 'user data retrieved',
-            data: { ...user }
+            message: 'user data updated'
         };
     } catch (err) {
         if (err.status) throw err;
@@ -105,6 +122,9 @@ exports.deleteUser = async (data, context) => {
     try {
         const Repo = new Repository();
         const user = await Repo.get('user').find(context.id);
+
+        if (user) throw HttpError.BadRequest('user already exsist');
+
 
         return {
             message: 'user data retrieved',

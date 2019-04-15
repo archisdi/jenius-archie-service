@@ -3,6 +3,9 @@
 const Joi = require('joi');
 const { HttpError } = require('node-common');
 
+const GENERAL_STRING = Joi.string().min(4).max(25).required();
+const GENERAL_ID = Joi.string().required();
+
 const schemas = {
     login: Joi.object({
         body: Joi.object({
@@ -21,6 +24,25 @@ const schemas = {
                 .optional(),
             limit: Joi.number().integer().positive().default(5)
                 .optional()
+        }).required()
+    }),
+    userCreate: Joi.object({
+        body: Joi.object({
+            username: GENERAL_STRING,
+            email: Joi.string().email().required(),
+            account_number: GENERAL_STRING,
+            identity_number: GENERAL_STRING
+        }).required()
+    }),
+    userUpdate: Joi.object({
+        params: Joi.object({
+            id: GENERAL_ID
+        }).required(),
+        body: Joi.object({
+            username: GENERAL_STRING,
+            email: Joi.string().email().required(),
+            account_number: GENERAL_STRING,
+            identity_number: GENERAL_STRING
         }).required()
     })
 };

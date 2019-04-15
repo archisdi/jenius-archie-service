@@ -29,6 +29,11 @@ class UserRepo extends BaseRepository {
             .limit(limit)
             .sort({ occurs_at: -1 });
     }
+
+    async updateOne(conditions, payload) {
+        const mongo = await this.getMongoInstance();
+        return mongo.User.updateOne(conditions, payload);
+    }
 }
 
 module.exports = UserRepo;
