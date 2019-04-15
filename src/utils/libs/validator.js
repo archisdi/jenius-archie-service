@@ -14,6 +14,14 @@ const schemas = {
         body: Joi.object({
             refresh_token: Joi.string().required()
         }).required()
+    }),
+    userList: Joi.object({
+        query: Joi.object({
+            page: Joi.number().integer().positive().default(1)
+                .optional(),
+            limit: Joi.number().integer().positive().default(5)
+                .optional()
+        }).required()
     })
 };
 
