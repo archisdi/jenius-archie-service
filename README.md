@@ -13,3 +13,4 @@
 - user detail endpoint can use id, account number or identity number
 - all indexing is defined in mongodb models
 - deployed in private gcp compute engine
+- app data already seeded

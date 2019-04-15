@@ -110,10 +110,14 @@ exports.updateUser = async (data, context) => {
         const { body, params: { id } } = data;
         const Repo = new Repository();
 
+        let user = await Repo.get('user').findOne({ _id: id });
+        if (!user) throw HttpError.NotFound('user not found');
+
         /** will iterate to object key to generate search query to prevent duplication in every key given */
         const query = Object.keys(body).map(key => ({ [key]: body[key] }));
-        const user = await Repo.get('user').findOne({ $or: query, _id: { $ne: id } });
+        user = await Repo.get('user').findOne({ $or: query, _id: { $ne: id } });
 
+        /** */
         if (user) throw HttpError.BadRequest('one of user attributes already taken by another user');
 
         /** update user data */
