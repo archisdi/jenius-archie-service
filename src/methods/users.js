@@ -2,25 +2,44 @@
 
 const { HttpError } = require('node-common');
 const Repository = require('../repositories');
-const Transformer = require('../utils/transformers/user_transformer');
 
 /**
- * @description retrieve user profile
- * @method GET
+ * @description create a new user
+ * @method POST
  */
-exports.profile = async (data, context) => {
+exports.createUser = async (data, context) => {
     try {
         const Repo = new Repository();
         const user = await Repo.get('user').find(context.id);
 
         return {
             message: 'user profile retrieved',
-            data: Transformer(user)
+            data: {}
         };
     } catch (err) {
         if (err.status) throw err;
         throw HttpError.InternalServerError(err.message);
     }
 };
+
+/**
+ * @description get user data
+ * @method GET
+ */
+exports.getUser = async (data, context) => {
+    try {
+        const Repo = new Repository();
+        const user = await Repo.get('user').find(context.id);
+
+        return {
+            message: 'user data retrieved',
+            data: { ...user }
+        };
+    } catch (err) {
+        if (err.status) throw err;
+        throw HttpError.InternalServerError(err.message);
+    }
+};
+
 
 module.exports = exports;

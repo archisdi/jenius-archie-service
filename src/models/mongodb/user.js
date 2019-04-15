@@ -28,4 +28,7 @@ const UserSchema = new Schema({
     }
 }, { ...options, collection: 'users' });
 
+/** define secondary indexes */
+UserSchema.index({ _id: 1, account_number: 1, identity_number: 1 });
+
 module.exports = model('User', UserSchema);

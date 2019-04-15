@@ -24,7 +24,7 @@ const app = express();
 /** Initialize common modules */
 HttpError.initialize();
 MongoContext.initialize({ path: MODELS_PATH.MONGO, config: MongoConfig });
-RedisContext.initialize(RedisConfig);
+RedisContext.initialize({ config: RedisConfig });
 JobWorker.initialize({ path: MODELS_PATH.JOB });
 
 /** Plugins */

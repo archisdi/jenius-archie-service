@@ -1,21 +1,19 @@
 {
-  "name": "exprestful",
+  "name": "jenius-archie-service",
   "version": "1.0.1",
   "private": true,
   "scripts": {
     "start": "node ./server.js",
     "serve": "nodemon ./server.js",
+    "seed": "node ./seeder",
     "clean-install": "rm -rf node_modules package-lock.json && npm install --save",
-    "migrate": "./scripts/migrations/migrate.sh",
-    "migrate:rollback": "./scripts/migrations/rollback.sh",
-    "migrate:refresh": "./scripts/migrations/refresh.sh",
-    "db:seed": "./scripts/migrations/seed.sh",
     "tests": "NODE_ENV=test nyc --reporter=html --reporter=text ava --verbose",
     "tests-report": "open coverage/index.html",
     "lint": "eslint --fix src/**"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.4",
     "body-parser": "~1.18.2",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
@@ -36,7 +34,6 @@
     "node-common": "git+https://github.com/archisdi/node-common.git",
     "randomstring": "^1.1.5",
     "sequelize": "^5.1.0",
-    "sequelize-cli": "^5.4.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
